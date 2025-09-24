@@ -50,10 +50,9 @@ class TestProductDocumentDownloadCounterHttp(
                 "download_count_enabled": True,
             }
         )
-        self.url = (
-            f"/shop/{self.product_template.id}/document/" f"{self.document.id}/count"
-        )
+        self.url = f"/shop/{self.product_template.id}/document/{self.document.id}"
 
+    @mute_logger("odoo.http")
     def test_http_download_inactive_document(self):
         """
         Test that downloading an inactive document redirects to the product page
@@ -65,7 +64,7 @@ class TestProductDocumentDownloadCounterHttp(
         self.assertEqual(document.download_count, 0)
         self.assertEqual(response.status_code, 301)
 
-    @mute_logger(CONTROLLER_LOGGER)
+    @mute_logger(CONTROLLER_LOGGER, "odoo.http")
     def test_http_download_not_published(self):
         """
         Test that downloading a document not shown on the product
@@ -82,6 +81,7 @@ class TestProductDocumentDownloadCounterHttp(
         self.assertEqual(response.status_code, 200)
         self.assertEqual(after_count, before_count)
 
+    @mute_logger("odoo.http")
     def test_http_download_counting(self):
         """
         Test that downloading a document increments the download count
